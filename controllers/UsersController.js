@@ -1,7 +1,8 @@
 import sha1 from 'sha1';
 import Queue from 'bull';
+import { ObjectId } from 'mongodb';
 import dbClient from '../utils/db';
-
+import userUtils from '../utils/user';
 
 const userQ = new Queue('userQ');
 
@@ -49,18 +50,18 @@ export default class UsersController {
   }
 
   static async getMe(req, res) {
-    const token = req.header('X-Token');
+    const { userId } = await userUtils.getUserIdAndKey(req);
 
-    if (!token) {
-      return res.status(401).send({ error: 'Unauthorized' });
-    }
-
-    const user = await dbClient.usersCollection.findOne({ _id: dbClient.getObjectId(token) });
+    const user = await userUtils.getUser({ _id: ObjectId(userId) });
 
     if (!user) {
       return res.status(401).send({ error: 'Unauthorized' });
     }
 
-    return res.status(200).send({ id: user._id, email: user.email });
+    const processedUser = { id: user._id, ...user };
+    delete processedUser._id;
+    delete processedUser.password;
+
+    return res.status(200).send(processedUser);
   }
 }
