@@ -23,18 +23,24 @@ export default class UsersController {
 
     const secPass = sha1(password);
 
-    const insertStat = await dbClient.usersCollection.insertOne({
-      email,
-      password: secPass,
-    });
+    let returnedUser;
+    try {
+      returnedUser = await dbClient.usersCollection.insertOne({
+        email,
+        password: secPass,
+      });
+    } catch (err) {
+      await userQ.add({});
+      return res.status(500).send({ error: 'Error creating user' });
+    }
 
     const createdUser = {
-      id: insertStat.insertedId,
+      id: returnedUser.insertedId,
       email,
     };
 
     await userQ.add({
-      userId: insertStat.insertedId.toString(),
+      id: returnedUser.insertedId.toString(),
     });
 
     return res.status(201).send(createdUser);
