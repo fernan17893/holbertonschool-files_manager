@@ -16,6 +16,6 @@ export default function controllerRoute(app) {
   });
 
   router.post('/users', (req, res) => {
-    UsersController.getAllUsers(req, res);
+    UsersController.postNew(req, res);
   });
 }
