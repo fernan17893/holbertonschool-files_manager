@@ -34,7 +34,7 @@ export default class UsersController {
       return res.status(500).send({ error: 'Error creating user' });
     }
 
-    const createdUser = {
+    const user = {
       id: returnedUser.insertedId,
       email,
     };
@@ -43,6 +43,6 @@ export default class UsersController {
       id: returnedUser.insertedId.toString(),
     });
 
-    return res.status(201).send(createdUser);
+    return res.status(201).send(user);
   }
 }
