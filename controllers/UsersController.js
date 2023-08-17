@@ -50,13 +50,6 @@ export default class UsersController {
   }
 
   static async getMe(req, res) {
-    const { userId } = await userUtils.getUserIdAndKey(req);
-
-    const user = await dbClient.usersCollection.findOne({ _id: ObjectId(userId) });
-    if (!user) {
-      return res.status(401).send({ error: 'Unauthorized' });
-    }
-
-    return res.status(200).send({ id: user._id, email: user.email });
-  }
+    
+}
 }
