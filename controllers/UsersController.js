@@ -61,6 +61,8 @@ export default class UsersController {
       return res.status(401).send({ error: 'Unauthorized' });
     }
 
-    return res.status(200).send({ id: user._id, email: user.email });
+    const { _id, email } = user;
+
+    return res.status(200).send({ id: _id, email });
   }
 }
