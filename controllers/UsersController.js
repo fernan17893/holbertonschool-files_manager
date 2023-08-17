@@ -1,7 +1,8 @@
 import sha1 from 'sha1';
+import Queue from 'bull';
 import dbClient from '../utils/db';
 
-const userQ = require('../utils/redis');
+const userQ = new Queue('userQ');
 
 export default class UsersController {
   static async postNew(req, res) {
@@ -21,13 +22,13 @@ export default class UsersController {
       return res.status(400).send({ error: 'Already exist' });
     }
 
-    const secPass = sha1(password);
+    const hashpass = sha1(password);
 
     let returnedUser;
     try {
       returnedUser = await dbClient.usersCollection.insertOne({
         email,
-        password: secPass,
+        password: hashpass,
       });
     } catch (err) {
       await userQ.add({});
